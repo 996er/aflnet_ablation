@@ -9123,7 +9123,7 @@ int main(int argc, char** argv) {
       
       case 'r': /* seed selection option */
         if (sscanf(optarg, "%hhu", &skip_ratio) < 1 || optarg[0] == '-') FATAL("Bad syntax used for -r");
-        break
+        break;
 
       case 's': /* seed selection option */
         if (sscanf(optarg, "%hhu", &seed_selection_algo) < 1 || optarg[0] == '-') FATAL("Bad syntax used for -s");
