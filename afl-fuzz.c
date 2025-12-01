@@ -397,7 +397,7 @@ u8 feedback_type = CODE_FEEDBACK;   /* Select interesting seeds based on code fe
 u8 seed_schedule_type = IPSM_SCHEDULE; /* Choose next seeds based on state machine */
 u8 code_aware_schedule = 0;
 u8 false_negative_reduction = 0;
-
+u8 skip_ratio = 100;
 /* Implemented state machine */
 Agraph_t  *ipsm;
 static FILE* ipsm_dot_file;
@@ -7480,11 +7480,16 @@ havoc_stage:
 
     }
 
+    if (UR(100) < skip_ratio)
+      goto skip_run;
+
     if (common_fuzz_stuff(argv, out_buf, temp_len))
       goto abandon_entry;
 
     /* out_buf might have been mangled a bit, so let's restore it to its
        original size and shape. */
+
+skip_run:
 
     if (temp_len < len) out_buf = ck_realloc(out_buf, len);
     temp_len = len;
@@ -9115,6 +9120,10 @@ int main(int argc, char** argv) {
       case 'q': /* state selection option */
         if (sscanf(optarg, "%hhu", &state_selection_algo) < 1 || optarg[0] == '-') FATAL("Bad syntax used for -q");
         break;
+      
+      case 'r': /* seed selection option */
+        if (sscanf(optarg, "%hhu", &skip_ratio) < 1 || optarg[0] == '-') FATAL("Bad syntax used for -r");
+        break
 
       case 's': /* seed selection option */
         if (sscanf(optarg, "%hhu", &seed_selection_algo) < 1 || optarg[0] == '-') FATAL("Bad syntax used for -s");
